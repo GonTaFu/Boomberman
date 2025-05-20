@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
             // // C1
             // FileLevelLoader.Load(path);4
             // Debug.Log($"Loading level from {path}");
+            
 
             // C2
             if (levelIndex - 1 < 0 || levelIndex - 1 >= levelFiles.Count)
@@ -245,6 +246,10 @@ public class GameManager : MonoBehaviour
         {
             enemies[i].GetComponent<Enemy>().FreezeMovement();
         }
+
+        totalscore = 0;
+
+        levelIndex = 1;
     }
 
     public void GameWin()
@@ -289,6 +294,7 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
         isGameWin = false;
         enemies.Clear();
+
     }
 
     private IEnumerator LoadGameOverUI()

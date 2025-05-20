@@ -54,6 +54,7 @@ public class MainUIHandler : MonoBehaviour
 
     public void OnRestartButtonClicked()
     {
+        GameManager.Instance.ClearLevel();
         SceneManager.LoadScene(1); // Load the main scene (index 1)
     }
 
@@ -80,7 +81,6 @@ public class MainUIHandler : MonoBehaviour
         );
 
         GameManager.Instance.AssignGameUI(gameOverUI, gameWinnerUI);
-        GameManager.Instance.totalscore = 0;
         gameOverUI.SetActive(false);
         gameWinnerUI.SetActive(false);
 
