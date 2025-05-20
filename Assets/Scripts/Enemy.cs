@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public abstract class Enemy : MonoBehaviour
@@ -10,28 +11,33 @@ public abstract class Enemy : MonoBehaviour
     protected Vector2 moveDir;
     protected Rigidbody2D enenmyRb;
     protected CircleCollider2D collision2D;
-    public bool isFainted {get; private set;} = false;
+    public bool isFainted { get; private set; } = false;
 
     [SerializeField] protected Animator animator;
 
     private Vector2 inputMove = Vector2.zero;
 
     protected LayerMask obstacleLayer;
-    
-    protected virtual void Start() {
+
+    public Score score;
+    protected virtual void Start()
+    {
+        score = GameObject.Find("ScoreText").GetComponent<Score>();
         enenmyRb = GetComponent<Rigidbody2D>();
         collision2D = GetComponent<CircleCollider2D>();
         moveSpeed = speed;
 
         obstacleLayer = LayerMask.GetMask("Obstacle");
     }
-    
 
-    protected virtual void FixedUpdate() {
+
+    protected virtual void FixedUpdate()
+    {
         if (isFainted) return;
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, moveDir, 0.5f , obstacleLayer);
-        if (hit.collider != null && hit.collider != collision2D) {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, moveDir, 0.5f, obstacleLayer);
+        if (hit.collider != null && hit.collider != collision2D)
+        {
             Debug.Log($"Hit: {hit.collider.name}");
             Debug.DrawRay(transform.position, moveDir, Color.red, 1f);
 
@@ -41,24 +47,26 @@ public abstract class Enemy : MonoBehaviour
         Move();
     }
 
-    protected virtual void Move() 
+    protected virtual void Move()
     {
         enenmyRb.linearVelocity = moveDir * moveSpeed;
     }
 
     protected virtual void MoveAnimator()
     {
-        if (animator == null) {
+        if (animator == null)
+        {
             Debug.Log("Animator is not assigned.");
             return;
         }
-        
-        if (inputMove.x != moveDir.x || inputMove.y != moveDir.y) {
+
+        if (inputMove.x != moveDir.x || inputMove.y != moveDir.y)
+        {
             inputMove = new Vector2(moveDir.x, moveDir.y);
-            if (inputMove.x != 0) {inputMove.x = (Mathf.Abs(inputMove.x) / inputMove.x);}
-            if (inputMove.y != 0) {inputMove.y = (Mathf.Abs(inputMove.y) / inputMove.y);}
+            if (inputMove.x != 0) { inputMove.x = (Mathf.Abs(inputMove.x) / inputMove.x); }
+            if (inputMove.y != 0) { inputMove.y = (Mathf.Abs(inputMove.y) / inputMove.y); }
         }
-        
+
         animator.SetFloat("horizontal", moveDir.x);
         animator.SetFloat("vertical", moveDir.y);
         animator.SetFloat("speed", (moveDir.x * moveDir.x + moveDir.y * moveDir.y));
@@ -69,26 +77,39 @@ public abstract class Enemy : MonoBehaviour
 
     protected abstract void Change();
 
-    IEnumerator DeathAfter() {
+    IEnumerator DeathAfter()
+    {
 
         // Chạy animation chết
         PlayDeathAnimation();
 
         yield return new WaitForSeconds(1.0f);
 
+        // Gọi hàm trong Score để cộng điểm
+        if (GameObject.Find("EnemyOneal"))
+        {
+            score.AddScore(200);
+        }
+        else
+        {
+            score.AddScore(100);
+        }
+
         // Destroy(gameObject);
         gameObject.SetActive(false);
 
         // Gọi hàm trong GameManager để cập nhật số lượng kẻ địch còn lại
         GameManager.Instance.UpdateEnemyCount();
-        
+
     }
 
-    public void SetIsFainted(bool value) {
+    public void SetIsFainted(bool value)
+    {
         isFainted = value;
 
-        if (isFainted) {
-            
+        if (isFainted)
+        {
+
             Debug.Log($"Enemy {gameObject.name} đã bị hạ gục");
 
             StartCoroutine(DeathAfter());
@@ -97,9 +118,11 @@ public abstract class Enemy : MonoBehaviour
         }
     }
 
-    protected void PlayDeathAnimation() {
+    protected void PlayDeathAnimation()
+    {
 
-        if (animator == null) {
+        if (animator == null)
+        {
             Debug.Log("Animator is not assigned.");
             return;
         }
@@ -107,7 +130,8 @@ public abstract class Enemy : MonoBehaviour
         animator.SetBool("IsDeath", true);
     }
 
-    public void FreezeMovement() {
+    public void FreezeMovement()
+    {
         // Đặt vị trí của enemy về vị trí gần nhất với ô lưới
         // Để tránh việc enemy bị kẹt vào tường
         transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), 0);
@@ -116,7 +140,8 @@ public abstract class Enemy : MonoBehaviour
         enenmyRb.linearVelocity = Vector2.zero; // Đặt vận tốc về 0
     }
 
-    public void UnFreezeMovement() {
+    public void UnFreezeMovement()
+    {
         enenmyRb.constraints = RigidbodyConstraints2D.None; // Cho phép di chuyển
         moveSpeed = 2f; // Đặt tốc độ về 2
     }

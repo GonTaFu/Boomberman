@@ -80,6 +80,7 @@ public class MainUIHandler : MonoBehaviour
         );
 
         GameManager.Instance.AssignGameUI(gameOverUI, gameWinnerUI);
+        GameManager.Instance.totalscore = 0;
         gameOverUI.SetActive(false);
         gameWinnerUI.SetActive(false);
 

@@ -11,6 +11,7 @@ TagManager:
   - Enemy
   - Item
   - Indestruction
+  - Score
   layers:
   - Default
   - TransparentFX

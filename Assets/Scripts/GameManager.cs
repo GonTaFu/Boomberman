@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
 
     private GameObject player;
 
+    public int totalscore = 0;
+
 
     private void Awake()
     {
@@ -57,6 +59,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
     }
 
     public void LoadLevel()
